@@ -1,23 +1,26 @@
 name: Build and Publish
 
 on:
-    workflow_call:
-        inputs:
-            mumble_version:
-                required: true
-                type: string
-            docker_version:
-                required: true
-                type: string
-            platforms:
-                required: true
-                type: string
-            publish:
-                required: true
-                type: boolean
-            update_latest:
-                required: true
-                type: boolean
+  workflow_call:
+    inputs:
+      mumble_version:
+        required: true
+        type: string
+      docker_version:
+        required: true
+        type: string
+      platforms:
+        required: true
+        type: string
+      publish:
+        required: true
+        type: boolean
+      update_latest:
+        required: true
+        type: boolean
+      cmake_args:
+        required: false
+        type: string
 
 jobs:
     build:
@@ -55,6 +58,7 @@ jobs:
                 push: ${{ inputs.publish }}
                 build-args: |
                     MUMBLE_VERSION=${{ inputs.mumble_version }}
+                    MUMBLE_CMAKE_ARGS=${{ inputs.cmake_args }}
                 tags: ${{ env.TAGS }}
               env:
                 MUMBLE_VERSION: ${{ inputs.mumble_version }}
