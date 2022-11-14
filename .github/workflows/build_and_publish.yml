@@ -133,8 +133,8 @@ jobs:
                     MUMBLE_REPO=${{ inputs.mumble_repo }}
                     MUMBLE_VERSION=${{ inputs.mumble_version }}
                     MUMBLE_CMAKE_ARGS=${{ inputs.cmake_args }}
-                tags: ${{ steps.mumble-server-meta-latest.outputs.tags }}
-                labels: ${{ steps.mumble-server-meta-latest.outputs.labels }}
+                tags: ${{ steps.mumble-server-meta.outputs.tags }}
+                labels: ${{ steps.mumble-server-meta.outputs.labels }}
               env:
                 MUMBLE_VERSION: ${{ inputs.mumble_version }}
 
