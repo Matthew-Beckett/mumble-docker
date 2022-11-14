@@ -21,9 +21,14 @@ on:
       update_latest:
         required: true
         type: boolean
+      enable_build_cache:
+        required: false
+        type: boolean
+        default: false
       cmake_args:
         required: false
         type: string
+        default: ""
 
 jobs:
     build:
@@ -81,9 +86,27 @@ jobs:
                   type=raw,value=${{ inputs.mumble_version }}
                   type=raw,value=${{ inputs.mumble_version }}-${{ inputs.docker_version }}
     
-            - name: Build and push (latest)
+            - name: Build and push with cache (latest)
               uses: docker/build-push-action@v3
-              if: ${{ inputs.update_latest }}
+              if: ${{ inputs.update_latest && inputs.enable_build_cache }}
+              with:
+                context: .
+                platforms: ${{ inputs.platforms }}
+                push: ${{ inputs.publish }}
+                cache-from: type=local,src=/tmp/.buildx-cache
+                cache-to: type=local,dest=/tmp/.buildx-cache-new
+                build-args: |
+                    MUMBLE_REPO=${{ inputs.mumble_repo }}
+                    MUMBLE_VERSION=${{ inputs.mumble_version }}
+                    MUMBLE_CMAKE_ARGS=${{ inputs.cmake_args }}
+                tags: ${{ steps.mumble-server-meta-latest.outputs.tags }}
+                labels: ${{ steps.mumble-server-meta-latest.outputs.labels }}
+              env:
+                MUMBLE_VERSION: ${{ inputs.mumble_version }}
+
+            - name: Build and push no cache (latest)
+              uses: docker/build-push-action@v3
+              if: ${{ inputs.update_latest && ! inputs.enable_build_cache }}
               with:
                 context: .
                 platforms: ${{ inputs.platforms }}
@@ -97,9 +120,9 @@ jobs:
               env:
                 MUMBLE_VERSION: ${{ inputs.mumble_version }}
 
-            - name: Build and push
+            - name: Build and push with cache
               uses: docker/build-push-action@v3
-              if: ${{ ! inputs.update_latest }}
+              if: ${{ ! inputs.update_latest && inputs.enable_build_cache }}
               with:
                 context: .
                 platforms: ${{ inputs.platforms }}
@@ -110,12 +133,29 @@ jobs:
                     MUMBLE_REPO=${{ inputs.mumble_repo }}
                     MUMBLE_VERSION=${{ inputs.mumble_version }}
                     MUMBLE_CMAKE_ARGS=${{ inputs.cmake_args }}
+                tags: ${{ steps.mumble-server-meta-latest.outputs.tags }}
+                labels: ${{ steps.mumble-server-meta-latest.outputs.labels }}
+              env:
+                MUMBLE_VERSION: ${{ inputs.mumble_version }}
+
+            - name: Build and push no cache
+              uses: docker/build-push-action@v3
+              if: ${{ ! inputs.update_latest && ! inputs.enable_build_cache }}
+              with:
+                context: .
+                platforms: ${{ inputs.platforms }}
+                push: ${{ inputs.publish }}
+                build-args: |
+                    MUMBLE_REPO=${{ inputs.mumble_repo }}
+                    MUMBLE_VERSION=${{ inputs.mumble_version }}
+                    MUMBLE_CMAKE_ARGS=${{ inputs.cmake_args }}
                 tags: ${{ steps.mumble-server-meta.outputs.tags }}
                 labels: ${{ steps.mumble-server-meta.outputs.labels }}
               env:
                 MUMBLE_VERSION: ${{ inputs.mumble_version }}
 
             - name: Move buildx cache
+              if: ${{ inputs.enable_build_cache }}
               run: |
                 rm -rf /tmp/.buildx-cache
                 mv /tmp/.buildx-cache-new /tmp/.buildx-cache
