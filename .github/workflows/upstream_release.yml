@@ -1,16 +1,17 @@
 name: Upstream Release
 
 on:
-    repository_dispatch:
-        types: [ new_release ]
+  repository_dispatch:
+    types: [ new_release ]
 
 jobs:
-    publish_new_release:
-        uses: ./.github/workflows/build_and_publish.yml
-        with:
-            mumble_version: ${{ github.event.client_payload.tag }}
-            docker_version: '0'
-            publish: true
-            update_latest: ${{ github.event.client_payload.is_latest }}
-            platforms: "linux/amd64"
-        secrets: inherit
+  publish_new_release:
+    uses: ./.github/workflows/build_and_publish.yml
+    with:
+      mumble_version: ${{ github.event.client_payload.tag }}
+      docker_version: '0'
+      publish: true
+      enable_build_cache: true
+      platforms: "linux/amd64,linux/arm64"
+      update_latest: ${{ github.event.client_payload.is_latest }}
+      secrets: inherit

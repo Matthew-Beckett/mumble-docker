@@ -1,32 +1,37 @@
 name: Manual dispatch
 
 on:
-    workflow_dispatch:
-        inputs:
-            mumble_version:
-                description: "The version (tag or commit hash) of Mumble to build"
-                required: true
-                default: "latest"
-            docker_version:
-                description: "Docker image version, independent of mumble version"
-                required: true
-                default: "0"
-            publish:
-                description: "Whether the built image(s) shall be published to Dockerhub"
-                required: true
-                default: "false"
-            update_latest:
-                description: "Whether to update the 'latest' tag on Dockerhub"
-                required: true
-                default: "false"
+  workflow_dispatch:
+    inputs:
+      mumble_version:
+        description: "The version (tag or commit hash) of Mumble to build"
+        required: true
+        default: "latest"
+      docker_version:
+        description: "Docker image version, independent of mumble version"
+        required: true
+        default: "0"
+      publish:
+        description: "Whether the built image(s) shall be published to Dockerhub"
+        required: true
+        default: "false"
+      update_latest:
+        description: "Whether to update the 'latest' tag on Dockerhub"
+        required: true
+        default: "false"
+      use_build_cache:
+        description: "Enable using previously built Docker images as a build cache, not recommened for testing changes to dependencies or Mumble Server."
+        required: false
+        default: "true"
 
 jobs:
-    manual_dispatch:
-        uses: ./.github/workflows/build_and_publish.yml
-        with:
-            mumble_version: ${{ github.event.inputs.mumble_version }}
-            docker_version: ${{ github.event.inputs.docker_version }}
-            publish: ${{ github.event.inputs.publish == 'true' }}
-            update_latest: ${{ github.event.inputs.update_latest == 'true' }}
-            platforms: "linux/amd64"
-        secrets: inherit
+  manual_dispatch:
+    uses: ./.github/workflows/build_and_publish.yml
+    with:
+      mumble_version: ${{ github.event.inputs.mumble_version }}
+      docker_version: ${{ github.event.inputs.docker_version }}
+      publish: ${{ github.event.inputs.publish == 'true' }}
+      enable_build_cache: ${{ github.event.inputs.use_build_cache == 'true' }}
+      platforms: "linux/amd64,linux/arm64"
+      update_latest: ${{ github.event.inputs.update_latest == 'true' }}
+    secrets: inherit
