@@ -3,6 +3,9 @@ name: Build and Publish
 on:
   workflow_call:
     inputs:
+      mumble_repo:
+        required: true
+        type: string
       mumble_version:
         required: true
         type: string
@@ -57,6 +60,7 @@ jobs:
                 platforms: ${{ inputs.platforms }}
                 push: ${{ inputs.publish }}
                 build-args: |
+                    MUMBLE_REPO=${{ inputs.mumble_repo }}
                     MUMBLE_VERSION=${{ inputs.mumble_version }}
                     MUMBLE_CMAKE_ARGS=${{ inputs.cmake_args }}
                 tags: ${{ env.TAGS }}

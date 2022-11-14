@@ -51,6 +51,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 ADD ./scripts/* /mumble/scripts/
 WORKDIR /mumble/repo
 
+ARG MUMBLE_REPO="https://github.com/mumble-voip/mumble/"
 ARG MUMBLE_VERSION=latest
 ARG MUMBLE_BUILD_NUMBER=""
 ARG MUMBLE_CMAKE_ARGS=""

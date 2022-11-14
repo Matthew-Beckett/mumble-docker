@@ -3,7 +3,11 @@
 set -e
 set -x
 
-git clone --filter=tree:0 https://github.com/mumble-voip/mumble/ /mumble/repo
+if [[ -n "$MUMBLE_REPO" && ! "$MUMBLE_REPO" == "https://github.com/mumble-voip/mumble/" ]]; then
+	git clone --filter=tree:0 "$MUMBLE_REPO" /mumble/repo
+else
+	git clone --filter=tree:0 https://github.com/mumble-voip/mumble/ /mumble/repo
+fi
 
 cd /mumble/repo
 
