@@ -47,7 +47,7 @@ jobs:
             mumble_repo: "https://github.com/Krzmbrzl/mumble"
             mumble_version: "streamline-packetdatastream-impl"
             docker_version: '0'
-            publish: false
+            publish: true
             update_latest: true
             cmake_args: ""
             platforms: "linux/amd64,linux/arm64"
