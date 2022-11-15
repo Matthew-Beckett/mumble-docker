@@ -46,4 +46,4 @@ jobs:
             publish: true
             enable_build_cache: true
             update_latest: false
-            platforms: "linux/amd64,linux/arm64"
+            platforms: "linux/amd64,linux/arm64,linux/armv7"
